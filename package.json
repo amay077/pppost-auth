@@ -1,0 +1,23 @@
+{
+  "name": "pppost-auth",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "netlify env:import .env && netlify functions:serve --port 9000"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://amay077@github.com/amay077/hello-netlify-functions.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/amay077/hello-netlify-functions/issues"
+  },
+  "homepage": "https://github.com/amay077/hello-netlify-functions#readme",
+  "dependencies": {
+    "netlify-cli": "^13.0.0",
+    "node-fetch": "^2.6.9"
+  }
+}
