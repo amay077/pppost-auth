@@ -14,7 +14,7 @@ const headers = {
 };
 
 const handler = async (event) => {
-  console.info(`FIXME h_oku 後で消す  -> handler -> event:`, event);
+  console.info(`FIXME 後で消す  -> handler -> event:`, event);
 
   try {
     const code = event.queryStringParameters.code ?? 'empty';
@@ -34,12 +34,12 @@ const handler = async (event) => {
     const res = await fetch(url, {
       method: 'POST',
       headers,
-      body: body,
+      body,
     });
     
 
     if (!res.ok) {
-      console.log(`FIXME h_oku 後で消す  -> handler -> res.status:`, res.status);
+      console.log(`FIXME 後で消す  -> handler -> res.status:`, res.status);
       return {
         statusCode: res.status,
         headers: resHeaders,
@@ -56,7 +56,7 @@ const handler = async (event) => {
       body: JSON.stringify(tokenResponse)
     }
   } catch (error) {
-    console.log(`FIXME h_oku 後で消す  -> handler -> error:`, error);
+    console.log(`FIXME 後で消す  -> handler -> error:`, error);
     return { statusCode: 500, body: error.toString() }
   }
 }

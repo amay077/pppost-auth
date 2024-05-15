@@ -1,20 +1,25 @@
 const fetch = require('node-fetch')
 
 const handler = async (event) => {
-  console.info(`FIXME h_oku 後で消す  -> handler -> event:`, event);
+  console.info(`FIXME 後で消す  -> handler -> event:`, event);
 
   try {
     const { refresh_token, text } = JSON.parse(event.body); // as { refresh_token: string, text: string };
-    console.info(`FIXME h_oku 後で消す  -> handler -> refresh_token:`, refresh_token);
+    console.info(`FIXME 後で消す  -> handler -> refresh_token:`, refresh_token);
 
     const tokens = await (async () => {
+      const body = new URLSearchParams({
+        refresh_token,
+        grant_type: 'refresh_token',
+      });
+        
       const res = await fetch(`https://api.twitter.com/2/oauth2/token`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': `Basic ${process.env.TWITTER_CLIENT_BASIC_AUTH}`,        
+          'Authorization': `Basic ${process.env.TWITTER_CLIENT_BASIC_AUTH}`,
         },
-        body: `refresh_token=${refresh_token}&grant_type=refresh_token`,
+        body,
       });
       
       if (!res.ok) {
@@ -42,7 +47,7 @@ const handler = async (event) => {
       }
     };
 
-    console.info(`FIXME h_oku 後で消す  -> handler -> tokens:`, tokens);
+    console.info(`FIXME 後で消す  -> handler -> tokens:`, tokens);
 
     return {
       statusCode: 200,
