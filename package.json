@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "netlify env:import .env && netlify functions:serve --port 9000"
+    "dev": "netlify env:import .env && netlify functions:serve --port 9000",
+    "replace": "node ./script/replace.cjs"
   },
   "repository": {
     "type": "git",
@@ -19,5 +20,8 @@
   "dependencies": {
     "netlify-cli": "^13.0.0",
     "node-fetch": "^2.6.9"
+  },
+  "devDependencies": {
+    "mustache": "^4.2.0"
   }
 }

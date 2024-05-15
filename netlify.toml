@@ -1,5 +1,5 @@
 [build]
-  command = "mkdir ./dist"
+  command = "mkdir ./dist && npm run replace"
   functions = "netlify/functions"
 [[headers]]
   for = "/*"
