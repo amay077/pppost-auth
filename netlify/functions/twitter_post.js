@@ -23,7 +23,8 @@ const handler = async (event) => {
       });
       
       if (!res.ok) {
-        console.error(`token request failed: ${res.status}`)
+        const err = await res.text()
+        console.error(`token request failed: ${res.status}`, err)
         throw new Error(`token request failed: ${res.status}`);
       }
 
