@@ -4,9 +4,39 @@ const handler = async (event) => {
   console.info(`FIXME 後で消す  -> handler -> event:`, event);
 
   try {
-    const { refresh_token, text } = JSON.parse(event.body); // as { refresh_token: string, text: string };
+    const { refresh_token, access_token, text } = JSON.parse(event.body); // as { refresh_token: string, text: string };
     console.info(`FIXME 後で消す  -> handler -> refresh_token:`, refresh_token);
 
+    const tweet = async (access_token) => {
+      const res = await fetch(`https://api.twitter.com/2/tweets`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${access_token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text }),
+      });    
+      return res;
+    };
+
+    console.info('1. tweet start');
+    let res = await tweet(access_token);
+    if (res.ok) {
+      const response = {
+        statusCode: 200,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+        },
+        body: JSON.stringify({ refresh_token, access_token })
+      };
+      console.info('1. tweet 成功', response);
+      return response;  
+    } else {
+      const err = await res.text();
+      console.warn(`1. token request failed: ${res.status}, continue.`, err);
+    }
+
+    console.info('2. token refresh');
     const tokens = await (async () => {
       const body = new URLSearchParams({
         refresh_token,
@@ -23,8 +53,8 @@ const handler = async (event) => {
       });
       
       if (!res.ok) {
-        const err = await res.text()
-        console.error(`token request failed: ${res.status}`, err)
+        const err = await res.text();
+        console.error(`2. token refresh failed: ${res.status}`, err)
         throw new Error(`token request failed: ${res.status}`);
       }
 
@@ -32,31 +62,27 @@ const handler = async (event) => {
       return resJson;
     })();
 
-    const res = await fetch(`https://api.twitter.com/2/tweets`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${tokens.access_token}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ text }),
-    });    
-
+    
+    console.info('3. tweet start');
+    res = await tweet(tokens.access_token);
     if (!res.ok) {
+      const err = await res.text();
+      console.error(`3. tweet failed: ${res.status}`, err)
       return {
         statusCode: res.status,
         body: JSON.stringify(res)
       }
     };
 
-    console.info(`FIXME 後で消す  -> handler -> tokens:`, tokens);
-
-    return {
+    const response = {
       statusCode: 200,
       headers: {
         'Access-Control-Allow-Origin': '*',
       },
-      body: JSON.stringify({ refresh_token: tokens.refresh_token })
-    }
+      body: JSON.stringify({ refresh_token: tokens.refresh_token, access_token: tokens.access_token })
+    };
+    console.info('3. tweet scceeded', response);
+    return response;
   } catch (error) {
     console.log(`handler -> error:`, error);
     return { statusCode: 500, body: error.toString() }
