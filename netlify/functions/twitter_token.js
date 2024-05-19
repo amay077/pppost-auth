@@ -7,10 +7,13 @@ const resHeaders = {
   'Content-Type': 'application/json',
 };
 
+// <TWITTER_CLIENT_ID>:<TWITTER_CLIENT_SECRET> を base64 エンコードしたもの
+const TWITTER_CLIENT_BASIC_AUTH = Buffer.from(`${process.env.TWITTER_CLIENT_ID}:${process.env.TWITTER_CLIENT_SECRET}`).toString('base64');
+
 const headers = {
   ...resHeaders,
   'Content-Type': 'application/x-www-form-urlencoded',
-  'Authorization': `Basic ${process.env.TWITTER_CLIENT_BASIC_AUTH}`,
+  'Authorization': `Basic ${TWITTER_CLIENT_BASIC_AUTH}`,
 };
 
 const handler = async (event) => {
@@ -19,7 +22,7 @@ const handler = async (event) => {
   try {
     const code = event.queryStringParameters.code ?? 'empty';
     const client_id = process.env.TWITTER_CLIENT_ID;
-    const redirect_uri = process.env.TWITTER_REDIRECT_URI;
+    const redirect_uri = event.queryStringParameters.redirect_uri ?? 'empty';
     const grant_type = 'authorization_code';
 
     const url = 'https://api.twitter.com/2/oauth2/token';
@@ -39,7 +42,8 @@ const handler = async (event) => {
     
 
     if (!res.ok) {
-      console.log(`FIXME 後で消す  -> handler -> res.status:`, res.status);
+      const err = await res.text();
+      console.error(`handler -> res.status:`, res.status, err);
       return {
         statusCode: res.status,
         headers: resHeaders,

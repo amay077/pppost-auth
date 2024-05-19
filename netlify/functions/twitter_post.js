@@ -3,6 +3,9 @@ const fetch = require('node-fetch')
 const handler = async (event) => {
   console.info(`FIXME 後で消す  -> handler -> event:`, event);
 
+  // <TWITTER_CLIENT_ID>:<TWITTER_CLIENT_SECRET> を base64 エンコードしたもの
+  const TWITTER_CLIENT_BASIC_AUTH = Buffer.from(`${process.env.TWITTER_CLIENT_ID}:${process.env.TWITTER_CLIENT_SECRET}`).toString('base64');
+  
   try {
     const { refresh_token, access_token, text } = JSON.parse(event.body); // as { refresh_token: string, text: string };
     console.info(`FIXME 後で消す  -> handler -> refresh_token:`, refresh_token);
@@ -47,7 +50,7 @@ const handler = async (event) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': `Basic ${process.env.TWITTER_CLIENT_BASIC_AUTH}`,
+          'Authorization': `Basic ${TWITTER_CLIENT_BASIC_AUTH}`,
         },
         body,
       });
