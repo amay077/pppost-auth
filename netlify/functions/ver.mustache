@@ -6,10 +6,11 @@ const resHeaders = {
 };
 
 const handler = async (event) => {
+  const env_ver = process.env.ENV_VER;
   return {
     statusCode: 200,
     headers: resHeaders,
-    body: JSON.stringify({ build_at: '{{built_at}}', env_ver: process.env.ENV_VER })
+    body: JSON.stringify({ build_at: '{{built_at}}', env_ver })
   }
 }
 
