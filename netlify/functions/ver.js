@@ -1,7 +1,15 @@
+// Need for CORS
+const resHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Credentials': true,
+  'Content-Type': 'application/json',
+};
+
 const handler = async (event) => {
   return {
     statusCode: 200,
-    body: JSON.stringify({ build_at: 'xxxxxx', env_ver: process.env.ENV_VER })
+    headers: resHeaders,
+    body: JSON.stringify({ build_at: '{{built_at}}', env_ver: process.env.ENV_VER })
   }
 }
 
