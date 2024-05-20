@@ -1,0 +1,16 @@
+POST https://upload.twitter.com/1.1/media/upload.json
+Authorization: Bearer d1VYVTJhUmNzdXlwX3hZVy11U014dE1UdUZXR1BkOXo5VTdoaXhfWW9vS0o3OjE3MTYyMDE1OTk0OTg6MTowOmF0OjE
+Content-type: application/json
+
+{
+  "media_data": "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs="
+}
+####
+
+POST https://api.twitter.com/2/tweets
+Authorization: Bearer d1VYVTJhUmNzdXlwX3hZVy11U014dE1UdUZXR1BkOXo5VTdoaXhfWW9vS0o3OjE3MTYyMDE1OTk0OTg6MTowOmF0OjE
+Content-type: application/json
+
+{
+  "text": "Tweeting with media!"
+}

@@ -22,6 +22,47 @@ const handler = async (event) => {
       return res;
     };
 
+    const { TwitterApi } = require('twitter-api-v2');
+    // const twitterClient = new TwitterApi({
+    //   appKey: '5GefBvuEGra2bJSGSo84hrMLP', 
+    //   appSecret: `laPLj4wYC7qZnb9fYfCHCGfAzUlhJweRvPbykKYf0emq0DMp40`,
+    //   accessToken: `726470840817065984-UZYNgwrRF6bznrUCPQpP5nd8TNyuoRL`,
+    //   accessSecret: `ShK37K3bWszjEB7AypytDQOiD7NoyxmCIC4gweoFlvxq0`, 
+    // });
+    // const twitterClient = new TwitterApi(access_token);
+    // const twitterClient = new TwitterApi({ username: 'carry_hamham', password: 'M1ldwolf' });    
+    // const consumerClient = new TwitterApi('AAAAAAAAAAAAAAAAAAAAAKd3twEAAAAAZho4PJS3fuv%2FFdxIfdG37Qty%2FzE%3DJ27dWKx959ouwRfwjV7yM0uqO3uQXhfsbPXF62HzpyQuOAXa4H');
+    const client = new TwitterApi({ appKey: '5GefBvuEGra2bJSGSo84hrMLP', appSecret: `laPLj4wYC7qZnb9fYfCHCGfAzUlhJweRvPbykKYf0emq0DMp40` });
+    const authLink = await client.generateAuthLink(`oob`);
+    console.log(`FIXME h_oku 後で消す  -> handler -> authLink:`, authLink);
+
+    // const authClient = new TwitterApi({
+    //   appKey: '5GefBvuEGra2bJSGSo84hrMLP', 
+    //   appSecret: `laPLj4wYC7qZnb9fYfCHCGfAzUlhJweRvPbykKYf0emq0DMp40`,
+    //   accessToken: `c7UU-gAAAAABt3enAAABj5Ykbew`,
+    //   accessSecret: `N2IhGMuO3i8s56sT5fwwbJ4OK6zRoTnH`,
+    // });
+    // const { client: twitterClient, accessToken, accessSecret } = await authClient.login(`79AyVTXP80PBoTW3v12bsCUIt2G6j2Sc`)    
+
+    // console.log(`FIXME h_oku 後で消す  -> handler -> accessToken, accessSecret:`, accessToken, accessSecret);
+
+    // 
+    //     
+    // Obtain app-only client
+    // const twitterClient = await consumerClient.appLogin();    
+
+
+    // await twitterClient.v1.tweet('Hello, this is a test.' + new Date().toISOString());
+
+
+    await twitterClient.v2.tweet('Hello, this is a test.' + new Date().toISOString());
+    // const buffer = Buffer.from('R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=', 'base64');
+
+    const mediaRes = await twitterClient.v1.uploadMedia('/Volumes/extssd/data/Downloads/2024/penguin_king_hina.png');
+    // const mediaRes = await twitterClient.v1.uploadMedia(buffer, { mimeType: 'image/gif' });    
+    console.info(mediaRes);
+
+
     console.info('1. tweet start');
     let res = await tweet(access_token);
     if (res.ok) {
@@ -33,6 +74,7 @@ const handler = async (event) => {
         body: JSON.stringify({ refresh_token, access_token })
       };
       console.info('1. tweet 成功', response);
+  
       return response;  
     } else {
       const err = await res.text();
@@ -88,6 +130,7 @@ const handler = async (event) => {
     return response;
   } catch (error) {
     console.log(`handler -> error:`, error);
+    
     return { statusCode: 500, body: error.toString() }
   }
 }
