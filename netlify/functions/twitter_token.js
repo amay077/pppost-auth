@@ -1,4 +1,4 @@
-const fetch = require('node-fetch')
+const fs = require('fs');
 
 // Need for CORS
 const resHeaders = {
@@ -7,57 +7,31 @@ const resHeaders = {
   'Content-Type': 'application/json',
 };
 
-// <TWITTER_CLIENT_ID>:<TWITTER_CLIENT_SECRET> を base64 エンコードしたもの
-const TWITTER_CLIENT_BASIC_AUTH = Buffer.from(`${process.env.TWITTER_CLIENT_ID}:${process.env.TWITTER_CLIENT_SECRET}`).toString('base64');
-
-const headers = {
-  ...resHeaders,
-  'Content-Type': 'application/x-www-form-urlencoded',
-  'Authorization': `Basic ${TWITTER_CLIENT_BASIC_AUTH}`,
-};
-
 const handler = async (event) => {
   console.info(`FIXME 後で消す  -> handler -> event:`, event);
 
   try {
     const code = event.queryStringParameters.code ?? 'empty';
-    const client_id = process.env.TWITTER_CLIENT_ID;
-    const redirect_uri = event.queryStringParameters.redirect_uri ?? 'empty';
-    const grant_type = 'authorization_code';
+    const oauth_token = event.queryStringParameters.oauth_token ?? 'empty';
 
-    const url = 'https://api.twitter.com/2/oauth2/token';
-    const body = new URLSearchParams({
-      code,
-      grant_type,
-      redirect_uri,
-      code_verifier: 'challenge',
-      client_id,
+    const text = fs.readFileSync(`/tmp/${oauth_token}.json`);
+    const authLink = JSON.parse(text);
+
+    const { TwitterApi } = require('twitter-api-v2');
+    const authClient = new TwitterApi({ 
+      appKey: process.env.TWITTER_APPKEY, 
+      appSecret: process.env.TWITTER_APPSECRET,
+      accessToken: oauth_token,
+      accessSecret: authLink.oauth_token_secret,
     });
+
+    const { accessToken, accessSecret } = await authClient.login(code);
+    console.info(`handler - `, accessToken, accessSecret); 
     
-    const res = await fetch(url, {
-      method: 'POST',
-      headers,
-      body,
-    });
-    
-
-    if (!res.ok) {
-      const err = await res.text();
-      console.error(`handler -> res.status:`, res.status, err);
-      return {
-        statusCode: res.status,
-        headers: resHeaders,
-        body: JSON.stringify(res)
-      }
-    };
-
-    const tokenResponse = await res.json();
-    console.info(`handler - `, tokenResponse); // { access_token: 'QWOxxxx' }
-
     return {
       statusCode: 200,
       headers: resHeaders,
-      body: JSON.stringify(tokenResponse)
+      body: JSON.stringify({ accessToken, accessSecret })
     }
   } catch (error) {
     console.log(`FIXME 後で消す  -> handler -> error:`, error);
