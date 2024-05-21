@@ -19,6 +19,19 @@ function decrypt(encryptedText) {
   return decrypted;
 }
 
+// 暗号化関数
+function encrypt(text) {
+  const key = Buffer.from(process.env.DATA_SECRET).subarray(0, 32);
+  const iv = Buffer.from(process.env.DATA_IV).subarray(0, 16);
+  
+  const crypto = require('crypto');
+  const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
+  let encrypted = cipher.update(text, 'utf8', 'hex');
+  encrypted += cipher.final('hex');
+  return encrypted;
+}
+
+
 const handler = async (event) => {
   console.info(`FIXME 後で消す  -> handler -> event:`, event);
 
@@ -39,11 +52,13 @@ const handler = async (event) => {
 
     const { accessToken, accessSecret } = await authClient.login(code);
     console.info(`handler - `, accessToken, accessSecret); 
+
+    const token = encrypt(JSON.stringify({ accessToken, accessSecret }));
     
     return {
       statusCode: 200,
       headers: resHeaders,
-      body: JSON.stringify({ accessToken, accessSecret })
+      body: JSON.stringify({ accessToken, accessSecret, token })
     }
   } catch (error) {
     console.log(`FIXME 後で消す  -> handler -> error:`, error);
