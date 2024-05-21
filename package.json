@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/amay077/hello-netlify-functions#readme",
   "dependencies": {
+    "@netlify/blobs": "^7.3.0",
     "netlify-cli": "^13.0.0",
     "node-fetch": "^2.6.9",
     "twitter-api-v2": "^1.16.4"

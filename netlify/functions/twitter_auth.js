@@ -20,7 +20,11 @@ const handler = async (event) => {
     const { oauth_token, url } = authLink;
 
     // authLink をファイルに保存する
-    fs.writeFileSync(`/tmp/${oauth_token}.json`,  JSON.stringify(authLink));
+    const { getStore } =  require('@netlify/blobs');
+    const store = getStore("construction");
+    store.setJSON(oauth_token, authLink);
+    // fs.writeFileSync(`/tmp/${oauth_token}.json`,  JSON.stringify(authLink));
+    
 
     return {
       statusCode: 200,

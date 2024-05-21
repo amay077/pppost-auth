@@ -14,8 +14,13 @@ const handler = async (event) => {
     const code = event.queryStringParameters.code ?? 'empty';
     const oauth_token = event.queryStringParameters.oauth_token ?? 'empty';
 
-    const text = fs.readFileSync(`/tmp/${oauth_token}.json`);
-    const authLink = JSON.parse(text);
+    // const text = fs.readFileSync(`/tmp/${oauth_token}.json`);
+    // const authLink = JSON.parse(text);
+
+    const { getStore } =  require('@netlify/blobs');
+    const store = getStore("construction");
+    const authLink = store.get(oauth_token);
+    console.log(`FIXME  -> handler -> authLink:`, authLink);
 
     const { TwitterApi } = require('twitter-api-v2');
     const authClient = new TwitterApi({ 
