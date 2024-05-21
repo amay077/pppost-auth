@@ -7,27 +7,34 @@ const resHeaders = {
   'Content-Type': 'application/json',
 };
 
+// 復号化関数
+function decrypt(encryptedText) {
+  const key = Buffer.from(process.env.DATA_SECRET).subarray(0, 32);
+  const iv = Buffer.from(process.env.DATA_IV).subarray(0, 16);
+  
+  const crypto = require('crypto');
+  const decipher = crypto.createDecipheriv('aes-256-cbc', key, iv);
+  let decrypted = decipher.update(encryptedText, 'hex', 'utf8');
+  decrypted += decipher.final('utf8');
+  return decrypted;
+}
+
 const handler = async (event) => {
   console.info(`FIXME 後で消す  -> handler -> event:`, event);
 
   try {
     const code = event.queryStringParameters.code ?? 'empty';
     const oauth_token = event.queryStringParameters.oauth_token ?? 'empty';
+    const data = event.queryStringParameters.data ?? 'empty';
 
-    // const text = fs.readFileSync(`/tmp/${oauth_token}.json`);
-    // const authLink = JSON.parse(text);
-
-    const { getStore } =  require('@netlify/blobs');
-    const store = getStore("construction");
-    const authLink = store.get(oauth_token);
-    console.log(`FIXME  -> handler -> authLink:`, authLink);
+    const oauth_token_secret = JSON.parse(decrypt(data)).oauth_token_secret;
 
     const { TwitterApi } = require('twitter-api-v2');
     const authClient = new TwitterApi({ 
       appKey: process.env.TWITTER_APPKEY, 
       appSecret: process.env.TWITTER_APPSECRET,
       accessToken: oauth_token,
-      accessSecret: authLink.oauth_token_secret,
+      accessSecret: oauth_token_secret,
     });
 
     const { accessToken, accessSecret } = await authClient.login(code);

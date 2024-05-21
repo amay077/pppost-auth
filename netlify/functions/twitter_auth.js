@@ -7,6 +7,18 @@ const resHeaders = {
   'Content-Type': 'application/json',
 };
 
+// 暗号化関数
+function encrypt(text) {
+  const key = Buffer.from(process.env.DATA_SECRET).subarray(0, 32);
+  const iv = Buffer.from(process.env.DATA_IV).subarray(0, 16);
+  
+  const crypto = require('crypto');
+  const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
+  let encrypted = cipher.update(text, 'utf8', 'hex');
+  encrypted += cipher.final('hex');
+  return encrypted;
+}
+
 const handler = async (event) => {
   console.info(`FIXME 後で消す  -> handler -> event:`, event);
 
@@ -19,17 +31,13 @@ const handler = async (event) => {
 
     const { oauth_token, url } = authLink;
 
-    // authLink をファイルに保存する
-    const { getStore } =  require('@netlify/blobs');
-    const store = getStore("construction");
-    store.setJSON(oauth_token, authLink);
-    // fs.writeFileSync(`/tmp/${oauth_token}.json`,  JSON.stringify(authLink));
-    
+    // 暗号化
+    const data = encrypt(JSON.stringify(authLink));
 
     return {
       statusCode: 200,
       headers: resHeaders,
-      body: JSON.stringify({ oauth_token, url })
+      body: JSON.stringify({ oauth_token, url, data })
     }
   } catch (error) {
     console.log(`FIXME 後で消す  -> handler -> error:`, error);
