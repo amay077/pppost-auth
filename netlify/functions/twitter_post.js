@@ -14,7 +14,7 @@ const handler = async (event) => {
   console.info(`FIXME 後で消す  -> handler -> event:`, event);
 
   try {
-    const {  token ,text } = JSON.parse(event.body); // as { refresh_token: string, text: string };
+    const {  token ,text, images } = JSON.parse(event.body); // as { refresh_token: string, text: string };
 
     const { accessToken, accessSecret } = JSON.parse(decrypt(token));
     console.info(`FIXME 後で消す  -> handler -> refresh_token:`, accessToken, accessSecret);
@@ -27,11 +27,36 @@ const handler = async (event) => {
       accessSecret, 
     });
 
-    await twitterClient.v2.tweet(text);
+    const fs = require('fs');
+    const regex = /^data:.+\/(.+);base64,(.*)$/;
 
-    // const mediaRes = await twitterClient.v1.uploadMedia('/Volumes/extssd/data/Downloads/2024/penguin_king_hina.png');
-    // // const mediaRes = await twitterClient.v1.uploadMedia(buffer, { mimeType: 'image/gif' });    
-    // console.info(mediaRes);
+    const media_ids = [];
+    for (const dataUrl of images) {
+      const matches = dataUrl.match(regex);
+      const ext = matches[1];
+      const data = matches[2];
+      const buffer = Buffer.from(data, 'base64');
+      const path = `/tmp/data_${new Date().toISOString()}.${ext}`
+      fs.writeFileSync(path, buffer);
+      // const mediaRes = await twitterClient.v1.uploadMedia('/Users/h_okuyama/Downloads/2024/penguin_king_hina.png');
+      const mediaRes = await twitterClient.v1.uploadMedia(path);
+      // const mediaRes = await twitterClient.v1.uploadMedia(buffer, { mimeType: 'image/gif' });    
+      console.info(mediaRes);      
+      media_ids.push(mediaRes);
+    }
+
+    const media = (() => {
+      if (media_ids.length <= 0) {
+        return undefined;
+      }
+
+      return {
+        media_ids
+      };
+    })();
+
+    await twitterClient.v2.tweet(text, { media });
+
 
     const response = {
       statusCode: 200,
