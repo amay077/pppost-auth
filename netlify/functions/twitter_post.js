@@ -1,3 +1,6 @@
+const fetch = require('node-fetch')
+const fs = require('fs');
+
 // 復号化関数
 function decrypt(encryptedText) {
   const key = Buffer.from(process.env.DATA_SECRET).subarray(0, 32);
@@ -14,7 +17,7 @@ const handler = async (event) => {
   console.info(`FIXME 後で消す  -> handler -> event:`, event);
 
   try {
-    const {  token ,text } = JSON.parse(event.body); // as { refresh_token: string, text: string };
+    const { token, text, images } = JSON.parse(event.body); // as { refresh_token: string, text: string };
 
     const { accessToken, accessSecret } = JSON.parse(decrypt(token));
     console.info(`FIXME 後で消す  -> handler -> refresh_token:`, accessToken, accessSecret);
@@ -27,11 +30,38 @@ const handler = async (event) => {
       accessSecret, 
     });
 
-    await twitterClient.v2.tweet(text);
+    const media_ids = [];
+    for (const image of images) {
+     
+      const res = await fetch(image, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${process.env.GITHUB_ACCESS_TOKEN}`,
+        },
+      });
+      if (res.ok) {
+        const buf = await res.arrayBuffer();
 
-    // const mediaRes = await twitterClient.v1.uploadMedia('/Volumes/extssd/data/Downloads/2024/penguin_king_hina.png');
-    // // const mediaRes = await twitterClient.v1.uploadMedia(buffer, { mimeType: 'image/gif' });    
-    // console.info(mediaRes);
+        const localPath = `/tmp/${new Date().toISOString()}.data`
+
+        fs.writeFileSync(localPath, Buffer.from(buf));
+        const mediaRes = await twitterClient.v1.uploadMedia(localPath);
+        media_ids.push(mediaRes);
+      }
+    }
+
+    const media = (() => {
+      if (media_ids.length <= 0) {
+        return undefined;
+      }
+
+      return {
+        media_ids
+      };
+    })();
+
+
+    await twitterClient.v2.tweet(text, { media });
 
     const response = {
       statusCode: 200,
