@@ -19,6 +19,7 @@
   "homepage": "https://github.com/amay077/hello-netlify-functions#readme",
   "dependencies": {
     "crypto-js": "^4.2.0",
+    "encoding-japanese": "^2.1.0",
     "netlify-cli": "^13.0.0",
     "node-fetch": "^2.6.9",
     "twitter-api-v2": "^1.16.4"
