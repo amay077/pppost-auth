@@ -10,7 +10,7 @@ const handler = async (event) => {
   return {
     statusCode: 200,
     headers: resHeaders,
-    body: JSON.stringify({ build_at: '{{built_at}}a', env_ver })
+    body: JSON.stringify({ build_at: '{{built_at}}aaa', env_ver })
   }
 }
 
