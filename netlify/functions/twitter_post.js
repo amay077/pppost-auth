@@ -3,8 +3,8 @@ const fs = require('fs');
 
 // 復号化関数
 function decrypt(encryptedText) {
-  const key = Buffer.from(process.env.DATA_SECRET).subarray(0, 32);
-  const iv = Buffer.from(process.env.DATA_IV).subarray(0, 16);
+  const key = Buffer.from(process.env.PPPOST_DATA_SECRET).subarray(0, 32);
+  const iv = Buffer.from(process.env.PPPOST_DATA_IV).subarray(0, 16);
   
   const crypto = require('crypto');
   const decipher = crypto.createDecipheriv('aes-256-cbc', key, iv);
@@ -24,8 +24,8 @@ const handler = async (event) => {
 
     const { TwitterApi } = require('twitter-api-v2');
     const twitterClient = new TwitterApi({
-      appKey: process.env.TWITTER_APPKEY, 
-      appSecret: process.env.TWITTER_APPSECRET,
+      appKey: process.env.PPPOST_TWITTER_APPKEY, 
+      appSecret: process.env.PPPOST_TWITTER_APPSECRET,
       accessToken,
       accessSecret, 
     });
@@ -36,7 +36,7 @@ const handler = async (event) => {
       const res = await fetch(image, {
         method: 'GET',
         headers: {
-          'Authorization': `Bearer ${process.env.GITHUB_ACCESS_TOKEN}`,
+          'Authorization': `Bearer ${process.env.PPPOST_GITHUB_ACCESS_TOKEN}`,
         },
       });
       if (res.ok) {

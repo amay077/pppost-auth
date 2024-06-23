@@ -1,8 +1,8 @@
 const fetch = require('node-fetch')
 
 const mastodonSettings = [
-  process.env.MASTODON_CLIENT_AUTH_MASTODON_CLOUD,
-  process.env.MASTODON_CLIENT_AUTH_MASTODON_JP,
+  process.env.PPPOST_MASTODON_CLIENT_AUTH_MASTODON_CLOUD,
+  process.env.PPPOST_MASTODON_CLIENT_AUTH_MASTODON_JP,
 ]
 .map(x => x.split(' '))
 .map(([server, client_id, client_secret]) => ({server, client_id, client_secret}))

@@ -9,8 +9,8 @@ const resHeaders = {
 
 // 復号化関数
 function decrypt(encryptedText) {
-  const key = Buffer.from(process.env.DATA_SECRET).subarray(0, 32);
-  const iv = Buffer.from(process.env.DATA_IV).subarray(0, 16);
+  const key = Buffer.from(process.env.PPPOST_DATA_SECRET).subarray(0, 32);
+  const iv = Buffer.from(process.env.PPPOST_DATA_IV).subarray(0, 16);
   
   const crypto = require('crypto');
   const decipher = crypto.createDecipheriv('aes-256-cbc', key, iv);
@@ -21,8 +21,8 @@ function decrypt(encryptedText) {
 
 // 暗号化関数
 function encrypt(text) {
-  const key = Buffer.from(process.env.DATA_SECRET).subarray(0, 32);
-  const iv = Buffer.from(process.env.DATA_IV).subarray(0, 16);
+  const key = Buffer.from(process.env.PPPOST_DATA_SECRET).subarray(0, 32);
+  const iv = Buffer.from(process.env.PPPOST_DATA_IV).subarray(0, 16);
   
   const crypto = require('crypto');
   const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
@@ -44,8 +44,8 @@ const handler = async (event) => {
 
     const { TwitterApi } = require('twitter-api-v2');
     const authClient = new TwitterApi({ 
-      appKey: process.env.TWITTER_APPKEY, 
-      appSecret: process.env.TWITTER_APPSECRET,
+      appKey: process.env.PPPOST_TWITTER_APPKEY, 
+      appSecret: process.env.PPPOST_TWITTER_APPSECRET,
       accessToken: oauth_token,
       accessSecret: oauth_token_secret,
     });

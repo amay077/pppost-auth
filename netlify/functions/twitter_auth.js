@@ -9,8 +9,8 @@ const resHeaders = {
 
 // 暗号化関数
 function encrypt(text) {
-  const key = Buffer.from(process.env.DATA_SECRET).subarray(0, 32);
-  const iv = Buffer.from(process.env.DATA_IV).subarray(0, 16);
+  const key = Buffer.from(process.env.PPPOST_DATA_SECRET).subarray(0, 32);
+  const iv = Buffer.from(process.env.PPPOST_DATA_IV).subarray(0, 16);
   
   const crypto = require('crypto');
   const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
@@ -24,7 +24,7 @@ const handler = async (event) => {
 
   try {
     const { TwitterApi } = require('twitter-api-v2');
-    const client = new TwitterApi({ appKey: process.env.TWITTER_APPKEY , appSecret: process.env.TWITTER_APPSECRET });
+    const client = new TwitterApi({ appKey: process.env.PPPOST_TWITTER_APPKEY , appSecret: process.env.PPPOST_TWITTER_APPSECRET });
     const authLink = await client.generateAuthLink(`oob`);
 
     console.info(authLink);

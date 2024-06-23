@@ -19,10 +19,10 @@ const handler = async (event) => {
 
   try {
     const branch_name = 'main';
-    const token = process.env.GITHUB_ACCESS_TOKEN;
+    const token = process.env.PPPOST_GITHUB_ACCESS_TOKEN;
   
     const file = new Date().toISOString();
-    const url = `${process.env.GITHUB_REPO_URL}/${file}_${autoId(8)}.data`;
+    const url = `${process.env.PPPOST_GITHUB_REPO_URL}/${file}_${autoId(8)}.data`;
 
     return {
       statusCode: 200,
