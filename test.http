@@ -8,9 +8,22 @@ Content-type: application/json
 ####
 
 POST https://api.twitter.com/2/tweets
-Authorization: Bearer d1VYVTJhUmNzdXlwX3hZVy11U014dE1UdUZXR1BkOXo5VTdoaXhfWW9vS0o3OjE3MTYyMDE1OTk0OTg6MTowOmF0OjE
+Authorization: Bearer xxxxx
 Content-type: application/json
 
 {
   "text": "Tweeting with media!"
+}
+
+
+#### 
+
+# Post to mastodon
+
+POST https://mastodon.cloud/api/v1/statuses
+Authorization: Bearer xxxxx
+Content-type: application/json
+
+{
+  "status": "test postttt"
 }
