@@ -18,10 +18,12 @@ const handler = async (event) => {
 
   try {
 
-    const { host, token, status, media_ids } = JSON.parse(event.body); // as { refresh_token: string, text: string };
+    const { host, token, status, media_ids, reply_to_id } = JSON.parse(event.body); // as { refresh_token: string, text: string };
 
     // const { accessToken, accessSecret } = JSON.parse(decrypt(token));
     // console.info(`FIXME 後で消す  -> handler -> refresh_token:`, accessToken, accessSecret);
+
+    const in_reply_to_id = reply_to_id ? reply_to_id : undefined;
 
     const res = await fetch(`https://${host}/api/v1/statuses`, {
       method: 'POST',
@@ -29,7 +31,7 @@ const handler = async (event) => {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ status, media_ids }),
+      body: JSON.stringify({ status, media_ids, in_reply_to_id }),
     });         
 
     const err = await res.text();

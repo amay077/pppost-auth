@@ -17,10 +17,10 @@ const handler = async (event) => {
   console.info(`FIXME 後で消す  -> handler -> event:`, event);
 
   try {
-    const { token, text, images } = JSON.parse(event.body); // as { refresh_token: string, text: string };
+    const { token, text, images, reply_to_id } = JSON.parse(event.body); // as { refresh_token: string, text: string };
 
     const { accessToken, accessSecret } = JSON.parse(decrypt(token));
-    console.info(`FIXME 後で消す  -> handler -> refresh_token:`, accessToken, accessSecret);
+    console.info(`FIXME 後で消す2  -> handler -> refresh_token:`, accessToken, accessSecret);
 
     const { TwitterApi } = require('twitter-api-v2');
     const twitterClient = new TwitterApi({
@@ -60,8 +60,11 @@ const handler = async (event) => {
       };
     })();
 
-
-    await twitterClient.v2.tweet(text, { media });
+    if ((reply_to_id?.length ?? 0) <= 0) {
+      await twitterClient.v2.tweet(text, { media });
+    } else {
+      await twitterClient.v2.reply(text, reply_to_id, { media });
+    }
 
     const response = {
       statusCode: 200,
